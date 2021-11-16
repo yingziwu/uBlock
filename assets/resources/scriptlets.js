@@ -357,6 +357,25 @@
         needle2 = needle2.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     needle2 = new RegExp(needle2);
+    let needle3 = '{{3}}';
+    if ( needle3 === '' || needle3 === '{{3}}' ) {
+        needle3 = '*';
+    }
+    function cssSelectorMatchCheck(selectors, element) {
+        let matches;
+        try {
+            matches = document.querySelectorAll(selectors);
+        } catch (error) {
+            return false;
+        }
+        if (matches && matches.length === 0) {
+            return false;
+        }
+        if (!element instanceof HTMLElement) {
+            return false;
+        }
+        return Array.from(matches).map((match) => match.isSameNode(element)).some((b) => b === true);
+    }
     self.EventTarget.prototype.addEventListener = new Proxy(
         self.EventTarget.prototype.addEventListener,
         {
@@ -369,7 +388,8 @@
                 }
                 if (
                     needle1.test(type) === false ||
-                    needle2.test(handler) === false
+                    needle2.test(handler) === false ||
+                    cssSelectorMatchCheck(needle3, thisArg) === false
                 ) {
                     return target.apply(thisArg, args);
                 }

@@ -362,6 +362,12 @@
         needle3 = '*';
     }
     function cssSelectorMatchCheck(selectors, element) {
+        if (!element instanceof HTMLElement) {
+            return false;
+        }
+        if (selectors === '*') {
+            return true;
+        }
         let matches;
         try {
             matches = document.querySelectorAll(selectors);
@@ -371,10 +377,7 @@
         if (matches && matches.length === 0) {
             return false;
         }
-        if (!element instanceof HTMLElement) {
-            return false;
-        }
-        return Array.from(matches).map((match) => match.isSameNode(element)).some((b) => b === true);
+        return Array.from(matches).some((match) => match.isSameNode(element));
     }
     self.EventTarget.prototype.addEventListener = new Proxy(
         self.EventTarget.prototype.addEventListener,
